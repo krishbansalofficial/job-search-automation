@@ -1,7 +1,5 @@
 # Job Search Automation (free stack, no VPS required)
 
-Built by **Krish Bansal**, a Computer Science student at Virginia Tech. See [About me](#about-me).
-
 Finds fresh job postings, scores them against your resume, drafts a
 tailored version of the relevant bullets, compiles a PDF, logs
 everything to a tracking spreadsheet, and emails you a morning
@@ -426,43 +424,3 @@ you with recruiters even when the keywords line up. The time this
 saves is
 best spent on the outreach and referral side of the search, not on
 pushing the daily application count higher.
-
-## About me
-
-I'm **Krish Bansal**, a Computer Science student at **Virginia Tech**
-(B.S. in Computer Science, minor in Entrepreneurship: New Venture
-Growth), graduating in **December 2026**. I built this project to run
-my own new-grad job search: it finds postings every morning, filters
-them to roles I can actually apply to, and gets each application to
-the point where I only need to review it and click submit.
-
-I'm looking for **new-grad and early-career roles** in software
-engineering, forward-deployed and solutions engineering, data and ML
-engineering, and technology consulting.
-
-**Things I've built**
-
-- **Real Estate Analyzer** (VT Hacks): a predictive pricing tool with
-  a React front end, Microsoft Azure machine-learning pipelines and SQL
-  data management.
-- **VEX U robotics** (VT CRO): autonomous and driver-control systems
-  in C++ with PROS for VEX U competitions.
-- **Playlist Recommendation**: a Java recommendation engine that
-  adapts to each listener's preferences.
-- **Inventory Management System**: a Java and SQL stock and invoicing
-  system for a candy store that improved efficiency by 30%.
-- **This repository**: job discovery across 15+ sources, eligibility
-  rules, Gemini scoring with budget and fallback handling, LaTeX resume
-  tailoring, Google Sheets logging, and Playwright form pre-fill.
-
-**Other experience:** research assistant on a University of Virginia
-and Virginia Tech study of emergency stress in crowds, founder pledge
-class of Virginia Tech's Kappa Theta Pi technology fraternity, essay
-mentor at UniRely, and an Uber x Crimson internship designing UI/UX
-mockups in Figma.
-
-**Skills:** Java, Python, C, C++, JavaScript, SQL, React, Node.js,
-Docker, Linux, Git, Pandas, Matplotlib, Seaborn, MySQL.
-
-**Contact:** [LinkedIn](https://www.linkedin.com/in/krish-bansalofficial/)
-· krishbansal45@vt.edu
