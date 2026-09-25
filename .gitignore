@@ -1,0 +1,14 @@
+
+output/
+*.pdf
+*.aux
+*.log
+__pycache__/
+*.pyc
+.env
+config/config.yml
+config/profile.yml
+.state/
+.venv/
+.uv-cache/
+job-queue.zip

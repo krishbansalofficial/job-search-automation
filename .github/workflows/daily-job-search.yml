@@ -1,0 +1,153 @@
+name: Daily Job Search
+
+on:
+  schedule:
+    # Daily run and email at 11:00 UTC: 7:00 AM Eastern daylight time, 6:00 AM standard time.
+    - cron: "0 11 * * *"
+    # Retry runs for when Gemini is overloaded. They share the daily request
+    # budget, so they cost nothing once it is spent, and only email on matches.
+    - cron: "0 15,19,23 * * *"
+  workflow_dispatch: {}  # lets you trigger a manual run from the Actions tab
+
+concurrency:
+  group: job-search-gemini-budget
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  run-pipeline:
+    # Opt-in: set the repository variable ENABLE_PIPELINE=true in your own copy.
+    # Keep that copy private: Actions artifacts (tailored resumes) are
+    # downloadable by any GitHub user on a public repository.
+    if: github.ref == 'refs/heads/main' && vars.ENABLE_PIPELINE == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install tectonic (free LaTeX engine)
+        run: |
+          curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh
+          sudo mv tectonic /usr/local/bin/
+
+      - name: Write config.yml from repo
+        run: |
+          if [ ! -f config/config.yml ]; then
+            cp config/config.example.yml config/config.yml
+          fi
+
+      - name: Restore Gemini usage ledger
+        uses: actions/cache/restore@v6
+        with:
+          path: .state/gemini-usage.json
+          key: gemini-usage-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            gemini-usage-
+
+      - name: Restore job queue from latest artifact
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const artifacts = await github.paginate(github.rest.actions.listArtifactsForRepo, {
+              owner: context.repo.owner, repo: context.repo.repo,
+              name: 'job-queue-main', per_page: 100
+            });
+            const artifact = artifacts.filter(a => !a.expired && a.workflow_run?.head_branch === 'main')
+              .sort((a, b) => b.id - a.id)[0];
+            if (artifact) {
+              const archive = await github.rest.actions.downloadArtifact({
+                owner: context.repo.owner, repo: context.repo.repo,
+                artifact_id: artifact.id, archive_format: 'zip'
+              });
+              fs.writeFileSync('job-queue.zip', Buffer.from(archive.data));
+            } else {
+              core.notice('No saved queue artifact: starting a new queue.');
+            }
+
+      - name: Extract job queue
+        shell: python
+        run: |
+          from pathlib import Path
+          from zipfile import ZipFile
+          import json
+          archive = Path('job-queue.zip')
+          if archive.exists():
+              with ZipFile(archive) as saved:
+                  payload = saved.read('job-queue.json')
+                  usage = json.loads(saved.read('gemini-usage.json')) if 'gemini-usage.json' in saved.namelist() else None
+              Path('.state').mkdir(exist_ok=True)
+              Path('.state/job-queue.json').write_bytes(payload)
+              if usage is not None:
+                  ledger = Path('.state/gemini-usage.json')
+                  cached = json.loads(ledger.read_text()) if ledger.exists() else {}
+                  if cached.get('date') == usage.get('date'):
+                      usage['requests'] = max(usage.get('requests', 0), cached.get('requests', 0))
+                      usage['blocked'] = usage.get('blocked', False) or cached.get('blocked', False)
+                      usage['blocked_models'] = sorted(set(usage.get('blocked_models', [])) | set(cached.get('blocked_models', [])))
+                      usage['last_request'] = max(usage.get('last_request', 0), cached.get('last_request', 0))
+                  elif cached.get('date', '') > usage.get('date', ''):
+                      usage = cached
+                  ledger.write_text(json.dumps(usage))
+              archive.unlink()
+
+      - name: Run pipeline
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          QUIET_WHEN_EMPTY: ${{ github.event.schedule == '0 15,19,23 * * *' }}
+        run: |
+          python scripts/doctor.py
+          python scripts/main.py
+
+      - name: Save job queue
+        if: always() && hashFiles('.state/job-queue.json') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: job-queue-main
+          path: |
+            .state/job-queue.json
+            .state/gemini-usage.json
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: ignore
+
+      - name: Save Gemini usage ledger
+        if: always()
+        uses: actions/cache/save@v6
+        with:
+          path: .state/gemini-usage.json
+          key: gemini-usage-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Upload tailored resumes as a run artifact
+        uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: tailored-resumes
+          path: |
+            output/*.pdf
+            output/pipeline-stats.json
+            output/application-manifest.json
+            output/review.html
+          if-no-files-found: ignore
+
+      - name: Publish run summary
+        if: always()
+        run: python scripts/run_summary.py

@@ -1,0 +1,61 @@
+# Copy this file to profile.yml and fill in your own details.
+# profile.yml is gitignored so your personal info never gets committed.
+#
+# scripts/apply_assist.py fills plain text/email/phone fields, uploads
+# your resume, and answers dropdown/radio questions only from the
+# screening_answers you write at the bottom of this file. It never
+# ticks checkboxes and never clicks submit.
+
+first_name: "Jane"
+last_name: "Doe"
+full_name: "Jane Doe"
+email: "jane@example.com"
+phone: "+1 555-123-4567"
+linkedin_url: "https://www.linkedin.com/in/janedoe"
+github_url: "https://github.com/janedoe"
+portfolio_url: "https://janedoe.dev"
+address: "123 Main St, Anytown, ST 00000"
+
+# Lever's "current company" field. Leave blank if not applicable.
+current_company: ""
+# Answers "current or previous job title" boxes. Leave blank to skip.
+current_title: ""
+
+# Only used on the rare posting that asks this as a free-text box
+# instead of a dropdown/radio button (those are answered from
+# screening_answers below). Leave blank to skip filling it anywhere.
+work_authorization_status: ""
+
+# Used only if a posting doesn't have a tailored resume logged in
+# the sheet yet (e.g. you're applying to something main.py hasn't
+# scored/compiled a resume for).
+default_resume_path: "output/default_resume.pdf"
+
+# Dropped into a free-text cover-letter / "anything else" box if the
+# form has one. Leave blank to skip.
+cover_letter_text: ""
+
+# Answers for dropdown / radio / autocomplete screening questions.
+# Each rule: `question` is a regex matched against the question text,
+# `answer` is a regex matched against the option labels, and the optional
+# `type` is text typed first into search-as-you-type boxes (school, city). The first rule
+# whose question matches decides; if none of its options match, the
+# question is left blank for you. Only add answers that are true for
+# you on every posting -- anything else stays a manual answer. The
+# assistant still never ticks checkboxes and never clicks submit.
+screening_answers:
+  - question: "require.*sponsor|sponsorship"
+    answer: "^yes"
+  - question: "authori[sz]ed to work|legally (authori[sz]ed|eligible)"
+    answer: "^yes"
+  - question: "gender|race|ethnic|hispanic|latino|veteran|disability|sexual orientation|transgender"
+    answer: "decline|don.t wish|prefer not|not to (say|answer|disclose)"
+  - question: "how did you (hear|find)"
+    answer: "job board|linkedin|other"
+  - question: "^country|country where you (currently )?reside"
+    answer: '^(united states|us|usa)\b'
+  - question: "^school"
+    type: "Your University"
+    answer: "your university"
+  - question: "^degree"
+    answer: "bachelor"

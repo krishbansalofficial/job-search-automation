@@ -1,0 +1,168 @@
+# Pipeline settings. This file is committed (the scheduled workflow reads it),
+# so keep secrets in GitHub Actions secrets, never here.
+
+# Roles you're searching for. Used to filter postings by title keyword.
+target_titles:
+  - "Machine Learning Engineer"
+  - "ML Engineer"
+  - "Software Engineer"
+  - "Software Developer"
+  - "Entry Software Developer"
+  - "Entry Level Software Developer"
+  - "Junior Software Engineer"
+  - "Junior Software Developer"
+  - "New Grad"
+  - "Early Career"
+  - "University Graduate"
+  - "SWE"
+  - "Data Engineer"
+  - "Data Analyst"
+  - "Data Scientist"
+  - "Software Developer 1"
+  - "AI Engineer"
+  - "Graduate Software"
+  # Customer-facing engineering: full-stack, API integration and client work.
+  - "Forward Deployed"
+  - "Forward-Deployed"
+  - "Deployment Strategist"
+  - "Solutions Engineer"
+  - "Customer Engineer"
+  - "Implementation Engineer"
+  - "Integration Engineer"
+  - "Full Stack"
+  - "Full-Stack"
+  - "Frontend Engineer"
+  - "Front End Engineer"
+  - "Front-End Engineer"
+  - "Frontend Developer"
+  - "Front End Developer"
+  - "Web Developer"
+  - "Application Developer"
+  - "Product Engineer"
+  # Tech consulting. Specific phrases only: a bare "Consultant" matches
+  # beauty/insurance/sales roles, and "IT Consultant" matches "Audit Consultant".
+  - "Technology Consultant"
+  - "Technology Consulting"
+  - "Technical Consultant"
+  - "Tech Consultant"
+  - "Solutions Consultant"
+  - "Associate Consultant"
+  - "Consulting Analyst"
+  - "Consulting Engineer"
+  - "Technology Analyst"
+  - "Implementation Consultant"
+
+# Matching queued jobs are scored before the rest of the FIFO backlog.
+priority_titles:
+  - "Forward Deployed"
+  - "Forward-Deployed"
+  - "Deployment Strategist"
+  - "Technology Consult"
+  - "Technical Consultant"
+  - "Tech Consultant"
+  - "Associate Consultant"
+  - "Consulting Analyst"
+  - "Technology Analyst"
+
+greenhouse_companies: [cloudflare, datadog, stripe, figma, duolingo,
+                       anthropic, scaleai, databricks, gleanwork, mongodb, brex, asana, vercel, gitlab,
+                       robinhood, roblox, affirm, coinbase, discord, reddit, dropbox]
+lever_companies: [palantir, zoox, veeva, shieldai]
+ashby_companies: [notion, ramp, linear, openai, cohere, cursor, modal, baseten, replit, elevenlabs, tavus,
+                  perplexity, snowflake, sentilink, ashby]
+smartrecruiters_companies: []
+# Public employer boards: only US-located postings, no API keys required.
+smartrecruiters_us_companies:
+  - ServiceNow
+  - WesternDigital
+  - Intuitive
+  - Solidigm
+  - AristaNetworks
+recruitee_companies: []
+
+use_simplify_new_grad_repo: true
+simplify_repo_readme_url: "https://raw.githubusercontent.com/SimplifyJobs/New-Grad-Positions/dev/README.md"
+
+# Only keep postings from the last N hours.
+max_posting_age_hours: 168
+max_jobs_to_score: 50
+max_candidates_to_evaluate: 100
+job_queue_path: ".state/job-queue.json"
+
+# Reject explicit mismatches; uncertain requirements remain eligible for review.
+eligibility:
+  exclude_senior_titles: true
+  max_required_experience_years: 2
+  # Set true to reject postings that explicitly say they will not sponsor visas.
+  requires_sponsorship: false
+  graduation_year: 2026
+  # No geographic exclusions assumed; add exact unwanted location phrases.
+  excluded_location_terms: []
+use_working_nomads: true
+use_remoteok: true
+use_remotive: true
+use_jobicy: true
+use_himalayas: true
+use_weworkremotely: true
+# Germany-focused jobs, including onsite/hybrid; geography remains unrestricted.
+use_arbeitnow: true
+
+# Optional: X API access may incur charges. Requires X_BEARER_TOKEN.
+# One request per run, up to 10 posts; no Gemini calls during discovery.
+use_x: false
+x_search_query: '("software engineer" OR "data engineer" OR "new grad") (hiring OR "we are hiring") -is:retweet lang:en'
+
+# Unofficial guest-page scraper. LinkedIn prohibits scraping in its terms;
+# may return no results or block access. No login or block bypass is used.
+use_linkedin_public: false
+linkedin_search_queries:
+  - "new grad software engineer"
+  - "junior data engineer"
+linkedin_location: "United States"
+
+# Optional paid Claude web-search source. Enable only after adding
+# ANTHROPIC_API_KEY as a GitHub Actions secret.
+use_claude_web_search: false
+claude_model: "claude-sonnet-4-5-20250929"
+claude_max_searches: 4
+claude_max_results: 10
+
+use_adzuna: true
+adzuna_countries:
+  - us
+  - gb
+  - sg
+
+# Gemini scoring is intentionally limited so the scheduled workflow reliably
+# finishes and writes its batch to Sheets. Set to null to process every match.
+max_jobs_per_run: 25
+
+# Pipeline-wide ceilings, including retries and fallback calls. Set these
+# below your project's active AI Studio quotas; discovery uses no Gemini.
+gemini_max_requests_per_run: 20
+gemini_max_requests_per_day: 20
+gemini_request_delay_seconds: 15
+gemini_usage_path: ".state/gemini-usage.json"
+
+# Path to your LaTeX resume template.
+resume_template_path: "resume/resume_template.tex"
+
+# Where compiled PDFs get written before upload/email.
+output_dir: "output"
+max_resume_email_attachments: 5
+
+# Google Sheet to log results to. The sheet must already exist and be
+# shared with your service account's email (see README).
+google_sheet_name: "Job Search Tracker"
+# Scores tab: one row per Gemini-scored job (match score, missing keywords, resume).
+google_sheet_worksheet: "Applications"
+# Postings tab: every eligible scraped job, written even when Gemini is down.
+google_sheet_postings_worksheet: "Postings"
+
+# Minimum ATS match score (0 to 100) before a job gets a tailored
+# resume generated at all. Keeps you from burning API calls on weak fits.
+min_match_score_to_tailor: 60
+
+# Email address that receives the morning summary.
+summary_email_to: "you@example.com"
+summary_email_from: "your.sender@gmail.com"

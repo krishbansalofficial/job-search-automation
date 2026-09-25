@@ -1,0 +1,175 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{multicol}
+
+\usepackage{fontawesome}
+\usepackage[a4paper, total={6.8in, 9.75in}]{geometry}
+\usepackage{graphicx}
+
+\usepackage[T1]{fontenc}
+\usepackage{tgheros}
+\renewcommand*\familydefault{\sfdefault}
+
+\ifdefined\pdfglyphtounicode
+  \input{glyphtounicode}
+\fi
+
+\setlength{\footskip}{5pt}
+
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
+
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-11.5pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-2pt}]
+
+% Ensure that generate pdf is machine readable/ATS parsable
+\ifdefined\pdfgentounicode
+  \pdfgentounicode=1
+\fi
+
+% Custom commands
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-2pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeSubSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeColumnSubheading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & \small#2 \\
+    \end{tabular*}\vspace{-8pt}
+}
+
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-8pt}} %to change the space between text
+
+\newcommand{\resumeItemizeListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeItemizeListEnd}{\vspace{-2pt}\end{itemize}}
+
+\newcommand{\resumeColumnStart}{\begin{multicols}{2}}
+\newcommand{\resumeColumnEnd}{\end{multicols}}
+%-------------------------------------------------------
+%%%%%%%%%%%%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+\begin{center}
+    \textbf{\Huge \scshape Jane Doe} \\ \vspace{2pt}
+     {jane.doe@example.com} $|$
+    {(555) 123-4567} $|$
+    {Anytown, ST}$|$
+    {linkedin.com/in/janedoe}
+\end{center}
+
+%-----------EDUCATION-----------
+\section{Education}
+\textbf{Example State University | Anytown, ST} \hfill \textit{Expected Graduation May 2026}
+
+{Bachelor of Science, \textbf{Major} in Computer Science}
+
+%-----------TECHNICAL SKILLS-----------
+\section{Technical Skills}
+ \resumeItemizeListStart
+    \small{\item{
+     \textbf{Languages}{: Python, Java, JavaScript, SQL, C++} \\
+     \textbf{Other}{: Git, React, Node.js, Docker, Linux, PostgreSQL, REST APIs} \\
+    }}
+ \resumeItemizeListEnd
+
+%-----------PROJECTS-----------
+\section{Projects Experience}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+        {\textbf{Campus Events Finder} $|$ \emph{React, Node.js, PostgreSQL}} {Jan 2025 -- Apr 2025}
+        \resumeItemListStart
+         \resumeItem{Built a full-stack web app that aggregates campus event feeds into a searchable calendar, serving 500+ weekly users}
+         \resumeItem{Designed a PostgreSQL schema and REST API with pagination and caching, cutting page load time by \textbf{40\%}}
+        \resumeItemListEnd
+      \resumeProjectHeading
+        {\textbf{Course Review Classifier} $|$ \emph{Python, scikit-learn, Pandas}}{Sep 2024 -- Dec 2024}
+        \resumeItemListStart
+         \resumeItem{Trained a text classifier on 20k course reviews to flag unhelpful reviews, reaching \textbf{88\%} F1 on a held-out set}
+        \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+%-----------EXPERIENCE-----------
+\section{Experience}
+    \resumeSubHeadingListStart
+      \resumeProjectHeading
+        {\textbf{Software Engineering Intern | Example Corp} $|$ \emph{Remote}} {May 2025 -- Aug 2025}
+        \resumeItemListStart
+         \resumeItem{Added automated integration tests to a Java payments service, raising coverage from 55\% to \textbf{80\%}}
+         \resumeItem{Wrote a Python script that reconciles daily transaction exports, saving the team about 3 hours per week}
+        \resumeItemListEnd
+    \resumeSubHeadingListEnd
+
+\end{document}
